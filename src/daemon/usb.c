@@ -244,8 +244,10 @@ const char* product_str(ushort product){
         return "m65e";
     if(product == P_SABRE_O || product == P_SABRE_L || product == P_SABRE_N || product == P_SABRE_O2)
         return "sabre";
-    if(product == P_SCIMITAR || product == P_SCIMITAR_PRO || product == P_SCIMITAR_ELITE || product == P_SCIMITAR_ELITE_W_D ||product == P_SCIMITAR_ELITE_W_U )
+    if(product == P_SCIMITAR || product == P_SCIMITAR_PRO || product == P_SCIMITAR_ELITE)
         return "scimitar";
+    if(product == P_SCIMITAR_ELITE_W_D ||product == P_SCIMITAR_ELITE_W_U )
+        return "scimitarw";
     if(product == P_HARPOON || product == P_HARPOON_PRO)
         return "harpoon";
     // Katar PRO XT and Katar PRO works the same, so we just do that

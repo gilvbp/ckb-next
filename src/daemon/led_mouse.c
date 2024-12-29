@@ -62,7 +62,8 @@ int savergb_mouse(usbdevice* kb, lighting* light, int mode){
 
     uchar data_pkt[MSG_SIZE] = { CMD_SET, FIELD_MOUSE, MOUSE_HWCOLOR, 1, 0 };
     // Save each RGB zone, minus the DPI light which is sent in the DPI packets
-    int zonecount = IS_SCIMITAR(kb) ? 4 : IS_SABRE(kb) ? 3 : 2;
+    // int zonecount = IS_SCIMITAR(kb) ? 4 : IS_SABRE(kb) ? 3 : 2;
+    int zonecount = 2;
     for(int i = 0; i < zonecount; i++){
         int led = LED_MOUSE + i;
         if(led >= LED_DPI)
@@ -84,7 +85,9 @@ int loadrgb_mouse(usbdevice* kb, lighting* light, int mode){
     uchar data_pkt[MSG_SIZE] = { CMD_GET, FIELD_MOUSE, MOUSE_HWCOLOR, 1, 0 };
     uchar in_pkt[MSG_SIZE] = { 0 };
     // Load each RGB zone
-    int zonecount = IS_SCIMITAR(kb) ? 4 : IS_SABRE(kb) ? 3 : 2;
+    // int zonecount = IS_SCIMITAR(kb) ? 4 : IS_SABRE(kb) ? 3 : 2;
+    int zonecount = 2;
+
     for(int i = 0; i < zonecount; i++){
         if(!usbrecv(kb, data_pkt, sizeof(data_pkt), in_pkt))
             return -1;
