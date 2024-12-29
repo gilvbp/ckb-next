@@ -401,6 +401,27 @@ static const Key ScimKeys[] = {
 #define SCIM_WIDTH      66
 #define SCIM_HEIGHT     M65_HEIGHT
 
+static const Key ScimWKeys[] = {
+        {nullptr,  "Left Mouse", "mouse1", 15, 0, 14, 32, false, true}, {nullptr,  "Right Mouse", "mouse2", 37, 0, 12, 32, false, true}, {nullptr,  "Middle Mouse", "mouse3", 29, 9, 8, 6, false, true},
+        // {nullptr,  "Front light", "front", 37, 0, 12, 8, true, false },
+        {nullptr,  "Wheel Up", "wheelup", 29, 3, 8, 6, false, true}, {nullptr,  "Wheel Down", "wheeldn", 29, 14, 8, 6, false, true},
+        // {nullptr,  "Wheel Light", "wheel", 29, 3, 8, 17, true, false},
+        {nullptr,  "DPI Cycle", "dpiup", 29, 19, 8, 9, false, true}, {nullptr,  "DPI Light", "dpi", 29, 21, 8, 4, true, false},
+        {nullptr,  "1", "#230", -6, 18, 7, 7, false, true}, {nullptr,  "2", "#231", 1, 18, 7, 7, false, true}, {nullptr,  "3", "#233", 8, 18, 7, 7, false, true},
+        {nullptr,  "4", "#234", -6, 25, 7, 7, false, true}, {nullptr,  "5", "#232", 1, 25, 7, 7, false, true}, {nullptr,  "6", "#235", 8, 25, 7, 7, false, true},
+        {nullptr,  "7", "#236", -6, 32, 7, 7, false, true}, {nullptr,  "8", "#237", 1, 32, 7, 7, false, true}, {nullptr,  "9", "#238", 8, 32, 7, 7, false, true},
+        {nullptr,  "10", "#239", -6, 39, 7, 7, false, true}, {nullptr,  "11", "#240", 1, 39, 7, 7, false, true}, {nullptr,  "12", "#241", 8, 39, 7, 7, false, true},
+        {nullptr,  "Thumb Light", "thumb", 7, 21, 10, 24, true, false},
+        {nullptr,  "Logo", "back", 26, 50, 16, 16, true, false},
+
+        {nullptr,  "Profile Switch", "profswitch", 22, 20, 8, 12, false, true}
+        //  {nullptr,  "Profile Light", "prof", 8, 12, 8, 4, true, false},
+};
+#define KEYCOUNT_SCIMW   (sizeof(ScimWKeys) / sizeof(Key))
+
+#define SCIMW_WIDTH      66
+#define SCIMW_HEIGHT     M65_HEIGHT
+
 // M95
 static const Key M95Keys[] = {
     {nullptr,  "Left Mouse", "mouse1", 42, 6, 14, 26, false, true}, {nullptr,  "Right Mouse", "mouse2", 63, 6, 14, 26, false, true}, {nullptr,  "Middle Mouse", "mouse3", 55, 8, 8, 7, false, true},
@@ -1231,6 +1252,16 @@ static QHash<QString, Key> getMap(KeyMap::Model model, KeyMap::Layout layout){
         }
         break;
     }
+    case KeyMap::SCIMITARW:{
+        // Scimitar mouse
+        for(const Key* key = ScimWKeys; key < ScimWKeys + KEYCOUNT_SCIMW; key++){
+            Key translatedKey = *key;
+            translatedKey.x += translatedKey.width / 2;
+            translatedKey.y += translatedKey.height / 2;
+            map[key->name] = translatedKey;
+        }
+        break;
+    }
     case KeyMap::HARPOON:{
         // Harpoon mouse
         for(const Key* key = HarpoonKeys; key < HarpoonKeys + KEYCOUNT_HARPOON; key++){
@@ -1600,6 +1631,8 @@ KeyMap::Model KeyMap::getModel(const QString& name){
         return SABRE;
     if(lower == "scimitar")
         return SCIMITAR;
+    if(lower == "scimitarw")
+        return SCIMITARW;
     if(lower == "harpoon")
         return HARPOON;
     if(lower == "glaive")
@@ -1685,6 +1718,8 @@ QString KeyMap::getModel(KeyMap::Model model){
         return "sabre";
     case SCIMITAR:
         return "scimitar";
+    case SCIMITARW:
+        return "scimitarw";
     case HARPOON:
         return "harpoon";
     case GLAIVE:
@@ -1774,6 +1809,8 @@ int KeyMap::modelWidth(Model model){
     case STRAFE_MK2:
         return KSTRAFE_WIDTH;
     case SCIMITAR:
+    case SCIMITARW:
+
         return SCIM_WIDTH;
     case M95:
         return M95_WIDTH;
@@ -1832,6 +1869,8 @@ int KeyMap::modelHeight(Model model){
     case M65E:
     case SABRE:
     case SCIMITAR:
+    case SCIMITARW:
+
     case HARPOON:
     case GLAIVE:
     case KATAR:
@@ -1920,6 +1959,9 @@ QString KeyMap::friendlyName(const QString& key, Layout layout){
 
     // All other names are found on mice
     map = KeyMap(SCIMITAR, layout);
+    if(map.contains(key))
+        return map.key(key).friendlyName();
+    map = KeyMap(SCIMITARW, layout);
     if(map.contains(key))
         return map.key(key).friendlyName();
     map = KeyMap(M65, layout);

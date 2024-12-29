@@ -94,7 +94,11 @@ static const keypatch SCIMITARpatch[] = {
     { 210, "mouse4", -1, SCAN_MOUSE | BTN_SIDE },   // Back button
     { 211, "mouse5", -1, SCAN_MOUSE | BTN_EXTRA },  // Forward button
     { 213, "dpiup", -1, KEY_CORSAIR },
-    { 237, "dpi", LED_MOUSE, KEY_NONE },
+
+    // { 1, "front", -1, KEY_NONE },
+    
+
+    // { 237, "dpi", LED_MOUSE, KEY_NONE },
     { 270, "dpidn",      2, SCAN_MOUSE },
     { 271, "dpiup",    3, SCAN_MOUSE },
     { 272, "thumb1",   4, SCAN_MOUSE },
@@ -104,7 +108,7 @@ static const keypatch SCIMITARpatch[] = {
     { 276, "thumb5",    8, SCAN_MOUSE },
     { 277, "thumb6",    9, SCAN_MOUSE },
     { 278, "thumb7",   10, SCAN_MOUSE },
-    { 279, "thumb8", SCAN_MOUSE | BTN_SIDE + 7, SCAN_MOUSE },
+    { 279, "thumb8", SCAN_MOUSE | BTN_SIDE + 7, SCAN_MOUSE }, // ???
     { 280, "thumb9", 12, SCAN_MOUSE },
     { 281, "sniper", 13, SCAN_MOUSE },
 };

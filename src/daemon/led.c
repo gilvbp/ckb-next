@@ -117,8 +117,8 @@ static int has_key(const char* name, const usbdevice* kb){
         // Mice only have the RGB zones
         if((IS_SABRE(kb) || IS_SCIMITAR(kb)) && !strcmp(name, "wheel"))
             return 1;
-        if(IS_SCIMITAR(kb) && !strcmp(name, "thumb"))
-            return 1;
+        // if(IS_SCIMITAR(kb) && !strcmp(name, "thumb"))
+        //     return 1;
         if(strstr(name, "dpi") == name || !strcmp(name, "front") || !strcmp(name, "back"))
             return 1;
         return 0;
