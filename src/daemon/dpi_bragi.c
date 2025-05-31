@@ -34,6 +34,7 @@ int updatedpi_bragi(usbdevice* kb, int force){
         return 0;
     lastdpi->forceupdate = newdpi->forceupdate = 0;
 
+    uchar pkt[BRAGI_JUMBO_SIZE] = {BRAGI_MAGIC, BRAGI_SET, 0, 0};
     // Set the current DPI requested.
     uchar response[BRAGI_JUMBO_SIZE] = {0};
     if (kb->is_bragi_xy_dpi) {  // Supondo que exista essa flag específica em usbdevice
