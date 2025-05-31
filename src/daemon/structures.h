@@ -384,6 +384,7 @@ typedef struct usbdevice_ {
         BRIGHTNESS_HARDWARE_COARSE,
     } brightness_mode;
     struct timespec last_rgb;
+    bool is_bragi_xy_dpi;
 } usbdevice;
 
 #endif  // STRUCTURES_H

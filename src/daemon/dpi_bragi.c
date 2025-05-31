@@ -36,7 +36,16 @@ int updatedpi_bragi(usbdevice* kb, int force){
 
     // Set the current DPI requested.
     uchar response[BRAGI_JUMBO_SIZE] = {0};
-    uchar pkt[BRAGI_JUMBO_SIZE] = {BRAGI_MAGIC, BRAGI_SET, BRAGI_DPI_XY, 0};
+    if (kb->is_bragi_xy_dpi) {  // Supondo que exista essa flag específica em usbdevice
+      pkt[2] = BRAGI_DPI_XY;
+    } else {
+      pkt[2] = BRAGI_DPI_X; // dispositivos padrões (master e outros)
+    }
+
+
+  uchar pkt[BRAGI_JUMBO_SIZE] = {BRAGI_MAGIC, BRAGI_SET, BRAGI_DPI_XY, 0};
+
+
     pkt[4] = newdpi->x[newdpi->current] & 0xFF;
     pkt[5] = (newdpi->x[newdpi->current] >> 8) & 0xFF;
     if(!usbrecv(kb, pkt, sizeof(pkt), response))
