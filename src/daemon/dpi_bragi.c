@@ -44,8 +44,6 @@ int updatedpi_bragi(usbdevice* kb, int force){
     }
 
 
-  uchar pkt[BRAGI_JUMBO_SIZE] = {BRAGI_MAGIC, BRAGI_SET, BRAGI_DPI_XY, 0};
-
 
     pkt[4] = newdpi->x[newdpi->current] & 0xFF;
     pkt[5] = (newdpi->x[newdpi->current] >> 8) & 0xFF;
