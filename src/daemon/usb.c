@@ -357,6 +357,10 @@ cleanup:
 }
 
 void fill_usbdevice_protocol(usbdevice* kb){
+
+  if (kb->product == P_SCIMITAR_ELITE_W_U || kb->product == P_SCIMITAR_ELITE_W_D) {
+      kb->is_bragi_xy_dpi = true;
+    }
     if(USES_BRAGI(kb->vendor, kb->product))
         kb->protocol = PROTO_BRAGI;
 
