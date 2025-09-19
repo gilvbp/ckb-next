@@ -38,6 +38,7 @@ enum CommandLineParseResults {
     CommandLineBackground,
     CommandLineSwitchToProfile,
     CommandLineSwitchToMode,
+    CommandLineSleep,
 };
 
 bool startDelay = false;
@@ -78,6 +79,9 @@ CommandLineParseResults parseCommandLine(QCommandLineParser &parser, QString *er
 
     const QCommandLineOption switchToModeOption(QStringList() << "m" << "mode", QObject::tr("Switches to the mode either in the current profile, or in the one specified by --profile"), "mode-name");
     parser.addOption(switchToModeOption);
+
+    const QCommandLineOption sleepOption(QStringList() << "z" << "sleep", QObject::tr("Turns the lights off as if the system was idling."));
+    parser.addOption(sleepOption);
 
     QCommandLineOption delayOption(QStringList() << "d" << "delay", QObject::tr("Delays application start for 5 seconds"));
     QCommandLineOption silentOption(QStringList() << "s" << "silent", QObject::tr("Disables the daemon not running popup"));
@@ -146,6 +150,10 @@ CommandLineParseResults parseCommandLine(QCommandLineParser &parser, QString *er
 
     if(parser.isSet(switchToModeOption)) {
         return CommandLineSwitchToMode;
+    }
+
+    if(parser.isSet(sleepOption)) {
+        return CommandLineSleep;
     }
 
     /* no explicit argument was passed */
@@ -290,8 +298,17 @@ int main(int argc, char* argv[]){
     QApplication a(argc, argv);
 
     // Setup translations
-    QTranslator translator;
-    if(translator.load(QLocale(), "", "", ":/translations"))
+    QTranslator translator, qttranslator;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#define LOCATION location
+#else
+#define LOCATION path
+#endif
+    if(qttranslator.load(QLocale(), QStringLiteral("qt"), QStringLiteral("_"), QLibraryInfo::LOCATION(QLibraryInfo::TranslationsPath)))
+        a.installTranslator(&qttranslator);
+#undef LOCATION
+
+    if(translator.load(QLocale(), QStringLiteral(""), QStringLiteral(""), QStringLiteral(":/translations")))
         a.installTranslator(&translator);
 
     const quint16 currentSettingsVersion = tmpSettings->value("Program/SettingsVersion", 0).toInt();
@@ -379,6 +396,11 @@ int main(int argc, char* argv[]){
 
         return 0;
     }
+    case CommandLineSleep:
+        if (!isRunning("Sleep"))
+            printf("ckb-next is not running.\n");
+
+        return 0;
     case CommandLineBackground:
         // If launched with --background, launch in background
         background = true;

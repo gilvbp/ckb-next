@@ -27,7 +27,7 @@
 
 add_executable(ckb-next "")
 set_property(TARGET ckb-next PROPERTY AUTOGEN_TARGET_DEPENDS ckb-next-lrelease)
-add_custom_target(gui DEPENDS ckb-next)
+add_custom_target(gui DEPENDS ckb-next ckb-next-sinfo animations)
 
 # Declare we want macOS Bundle
 if (MACOS)
@@ -102,6 +102,10 @@ elseif (LINUX)
         find_package(Qt5 REQUIRED COMPONENTS X11Extras)
     endif ()
     message(STATUS "Using Qt${QT_VERSION_MAJOR}")
+    if (QT_VERSION VERSION_LESS "6" AND USE_WAYLAND)
+        set(USE_WAYLAND OFF)
+        message(STATUS "Wayland features disabled (requires Qt 6)")
+    endif ()
 endif ()
 
 # Automatically handle MOC, UIC and RCC
@@ -287,6 +291,12 @@ elseif (LINUX)
         pkg_check_modules(XCB_SCREENSAVER xcb-screensaver)
 
         if(XCB_SCREENSAVER_FOUND AND (Qt5X11Extras_FOUND OR QT_VERSION_MAJOR VERSION_EQUAL 6))
+            target_sources(
+                ckb-next
+                    PRIVATE
+                        xcb/xcbidletimer.cpp
+                        xcb/xcbidletimer.h
+            )
             target_compile_definitions(
             ckb-next
                 PRIVATE
@@ -398,6 +408,75 @@ elseif (LINUX)
             )
         endif()
     endif()
+
+    target_sources(
+        ckb-next
+            PRIVATE
+                wayland/waylandutils.cpp
+                wayland/waylandutils.h
+    )
+
+    if (USE_WAYLAND)
+        find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS WaylandClient)
+        find_package(WaylandProtocols 1.27 REQUIRED)
+
+        if (NOT EXISTS ${WaylandProtocols_DATADIR}/staging/ext-idle-notify/ext-idle-notify-v1.xml)
+            message(FATAL_ERROR "Wayland ext-idle-notify-v1 protocol is not found. Either install them or pass -DUSE_WAYLAND=0 to disable idle detection.")
+        endif ()
+
+        if (Qt6_VERSION VERSION_GREATER_EQUAL "6.8.0")
+            set(private_code_option  "PRIVATE_CODE")
+        endif()
+
+        qt_generate_wayland_protocol_client_sources(
+            ckb-next
+                ${private_code_option}
+                FILES
+                    ${WaylandProtocols_DATADIR}/staging/ext-idle-notify/ext-idle-notify-v1.xml
+        )
+
+        target_sources(
+            ckb-next
+                PRIVATE
+                    wayland/waylandidletimer.cpp
+                    wayland/waylandidletimer.h
+        )
+
+        target_compile_definitions(
+            ckb-next
+                PRIVATE
+                    USE_WAYLAND_IDLE_NOTIFY
+        )
+
+        target_compile_definitions(
+            ckb-next
+                PRIVATE
+                    USE_WAYLAND
+        )
+
+        target_link_libraries(
+            ckb-next
+                PRIVATE
+                    Wayland::Client
+                    Qt${QT_VERSION_MAJOR}::WaylandClient
+        )
+
+        if (WaylandProtocols_VERSION VERSION_GREATER_EQUAL "1.40")
+            target_compile_definitions(
+                ckb-next
+                    PRIVATE
+                        USE_WAYLAND_INPUT_IDLE_NOTIFY
+            )
+        endif ()
+
+        if (Qt6_VERSION VERSION_LESS "6.5.0")
+            target_link_libraries(
+                ckb-next
+                    PRIVATE
+                        Qt${QT_VERSION_MAJOR}::GuiPrivate # For QPlatformNativeInterface. Qt 6.5 and later has QNativeInterface::QWaylandApplication.
+            )
+        endif ()
+    endif ()
 endif ()
 
 if (MAC_LEGACY)
@@ -465,7 +544,7 @@ add_custom_target(ckb-next-lrelease SOURCES "${QM_FILES}")
 
 # Simple target to call lupdate on demand
 add_custom_target(lupdate
-    COMMAND Qt5::lupdate "." "-ts" ${qt_translations_rel}
+    COMMAND Qt${QT_VERSION_MAJOR}::lupdate "." "-ts" ${qt_translations_rel}
     WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}")
 
 if (MACOS)
