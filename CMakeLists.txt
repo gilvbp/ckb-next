@@ -73,6 +73,7 @@ find_package(Sanitizers)
 
 include(CMakeDependentOption)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" CACHE STRING "Where to put binaries after compilation.")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" CACHE STRING "Where to put libraries after compilation.")
 set(UDEV_RULE_DIRECTORY "/lib/udev/rules.d" CACHE STRING "Where to install the udev rule.")
@@ -88,6 +89,7 @@ endif ()
 
 # Options: GUI
 option(WITH_GUI "Build with Qt GUI to manipulate animations." ON)
+option(PREFER_QT6 "Build with Qt 6 if available." ON)
 
 # Options: GUI animations
 option(WITH_ANIMATIONS "Build with animations." ON)
@@ -154,7 +156,6 @@ option(SAFE_INSTALL "Execute pre-install tasks to ensure correct installation.
     Intended to be used with direct installations without package manager." OFF)
 option(SAFE_UNINSTALL "Execute pre-uninstall tasks to ensure correct removal.
     Intended to be used with direct removals without package manager." OFF)
-option(PREFER_QT6 "Build with Qt 6 if available." ON)
 
 set(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL)
 set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)

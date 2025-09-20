@@ -217,6 +217,7 @@ typedef enum protocol_
 {
     PROTO_NXP,
     PROTO_BRAGI,
+    PROTO_LEGACY,
 } protocol_t;
 
 typedef enum pollrate_ {
@@ -236,6 +237,7 @@ typedef enum pollrate_ {
 #define KB_NAME_LEN         64
 #define SERIAL_LEN          35
 #define MSG_SIZE            64
+#define BRAGI_LARGE_SIZE    128
 #define BRAGI_JUMBO_SIZE    1024
 #define MAX_MSG_SIZE        BRAGI_JUMBO_SIZE
 #define IFACE_MAX           4
@@ -385,6 +387,8 @@ typedef struct usbdevice_ {
         BRIGHTNESS_HARDWARE_COARSE,
     } brightness_mode;
     struct timespec last_rgb;
+    // Legacy devices only
+    unsigned char previous_6kro[8];
 } usbdevice;
 
 #endif  // STRUCTURES_H
